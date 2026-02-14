@@ -12,11 +12,12 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    "opencv-python",
-    "imageio",
-    "numpy",
-    "Pillow"
+    "numpy"
 ]
+
+[project.optional-dependencies]
+video = [ "opencv-python", "imageio", "Pillow" ]
+csv = [ "pandas" ]
 
 [tool.setuptools.packages.find]
 where = ["."]
