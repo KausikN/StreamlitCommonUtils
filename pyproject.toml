@@ -24,7 +24,7 @@ dataset = [ "scikit-learn" ]
 graph = [ "networkx" ]
 image = [ ]
 plot = [ "networkx" ]
-video = [ "imageio", "Pillow" ]
+video = [ "imageio", "Pillow", "moviepy" ]
 
 [tool.setuptools.packages.find]
 where = ["."]

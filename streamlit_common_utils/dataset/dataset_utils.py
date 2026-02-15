@@ -122,6 +122,50 @@ def generate_polynomial_noisy_data_2D(
 
     return Dataset
 
+def generate_points_3D_random(N, Limits=[(-15, 15), (-15, 15), (-15, 15)], seed=5) -> np.ndarray:
+    '''
+    Generate Points - Generate N 3D points uniformly randomly distributed within the given Limits
+
+    Args:
+        N (int): Number of points to generate
+        Limits (list): List of tuples specifying the min and max limits for each dimension
+        seed (int): Random seed for reproducibility
+
+    Returns:
+        pts (array): Generated points of shape (N, 3)
+    '''
+    np.random.seed(seed)
+    x = Limits[0][0] + (Limits[0][1] - Limits[0][0]) * np.random.random(N)
+    y = Limits[1][0] + (Limits[1][1] - Limits[1][0]) * np.random.random(N)
+    z = Limits[2][0] + (Limits[2][1] - Limits[2][0]) * np.random.random(N)
+    pts = np.reshape(np.dstack((x, y, z)), (-1, 3))
+
+    return pts
+
+def generate_points_3D_grid(N, Limits=[(-15, 15), (-15, 15), (-15, 15)]) -> np.ndarray:
+    '''
+    Generate Points - Generate N points uniformly distributed as a grid within the given Limits
+
+    Args:
+        N (int): Number of points to generate
+        Limits (list): List of tuples specifying the min and max limits for each dimension
+
+    Returns:
+        pts (array): Generated points of shape (N, 3)
+    '''
+    x = np.linspace(Limits[0][0], Limits[0][1], N)
+    y = np.linspace(Limits[1][0], Limits[1][1], N)
+    z = np.linspace(Limits[2][0], Limits[2][1], N)
+
+    pts = []
+    for x0 in x:
+        for y0 in y:
+            for z0 in z:
+                pts.append([x0, y0, z0])
+    pts = np.array(pts)
+
+    return pts
+
 # Graph Datasets
 def generate_adjacency_matrix_random(
     N, prob_edge=0.5, weight_range=[0.1, 1.0], 

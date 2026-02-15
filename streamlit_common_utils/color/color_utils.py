@@ -1,4 +1,5 @@
 # Imports
+import colorsys
 import matplotlib.pyplot as plt
 
 # Main Functions
@@ -18,7 +19,7 @@ def get_cmap_gradient_color_point(i, n=1.0, cmap="gist_gray") -> tuple:
     return plt.get_cmap(cmap)(1.0 * (i/n))
 
 def combine_colors_alpha_composite(c1, c2) -> list:
-    """
+    '''
     Alpha composite c1 over c2.
 
     Args:
@@ -27,7 +28,7 @@ def combine_colors_alpha_composite(c1, c2) -> list:
 
     Returns:
         list: Combined RGBA color
-    """
+    '''
 
     if len(c1) != 4 or len(c2) != 4:
         raise ValueError("Both colors must be RGBA (4 components)")
@@ -62,3 +63,21 @@ def combine_colors_alpha_composite(c1, c2) -> list:
         out_color = [int(round(v)) for v in out_color]
 
     return out_color
+
+def generate_rainbow_colors(n) -> list:
+    '''
+    Generate n distinct colors in a rainbow spectrum
+
+    Args:
+        n (int): Number of colors to generate
+
+    Returns:
+        list: List of RGB color tuples
+    '''
+    colors = []
+
+    for i in range(n):
+        c = colorsys.hsv_to_rgb(i/n, 1.0, 1.0)
+        colors.append(c)
+    
+    return colors

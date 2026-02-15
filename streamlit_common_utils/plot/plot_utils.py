@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 # Main Functions
@@ -181,3 +182,66 @@ def plot_networkx_graph(
     plt.close(fig)
 
     return I_plot, pos
+
+# Plot Matplotlib Animations
+def create_matplotlib_animation(
+    plotFig, updateFunc, initFunc, 
+    frames=np.linspace(0, 2*np.pi, 64), show=False
+) -> FuncAnimation:
+    '''
+    Create a matplotlib animation from a plot figure, update function, init function and frames
+
+    Args:
+        plotFig: The matplotlib figure to animate
+        updateFunc: The function that updates the plot for each frame
+        initFunc: The function that initializes the plot
+        frames: The frames for the animation (default is a linspace from 0 to 2*pi)
+
+    Returns:
+        FuncAnimation: The created matplotlib animation
+    '''
+    animation = FuncAnimation(plotFig, updateFunc, frames, init_func=initFunc)
+    if show: plt.show()
+    return animation
+
+# Plot Values List Functions
+def plot_values_list(
+    values, titles=["", "", ""], 
+    plotLines=True, plotPoints=True, annotate=False, plot=True
+) -> np.ndarray:
+    '''
+    List - Visualise a list of values as a plot
+
+    Args:
+        values (list): The list of values to plot
+        titles (list): A list of 3 strings for the x-label, y-label and title of the plot
+        plotLines (bool): Whether to connect the points with lines
+        plotPoints (bool): Whether to plot the points
+        annotate (bool): Whether to annotate the points with their values
+        plot (bool): Whether to show the plot
+
+    Returns:
+        I_plot (array-like): The plotted image as a numpy array
+    '''
+    fig, ax = plt.subplots()
+    canvas = FigureCanvasAgg(fig)
+    if plotLines:
+        ax.plot(list(range(1, len(values)+1)), values)
+    if plotPoints:
+        ax.scatter(list(range(1, len(values)+1)), values)
+    plt.xlabel(titles[0])
+    plt.ylabel(titles[1])
+    plt.title(titles[2])
+    values_str = []
+    for i in range(len(values)):
+        values_str.append(str(values[i]))
+        if annotate:
+            ax.annotate(str(values[i]), (i+1, values[i]))
+    
+    if plot: plt.show()
+
+    canvas.draw()
+    buf = canvas.buffer_rgba()
+    I_plot = np.asarray(buf)
+
+    return I_plot
