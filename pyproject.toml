@@ -12,12 +12,19 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    "numpy"
+    "opencv-python",
+    "numpy",
+    "matplotlib"
 ]
 
 [project.optional-dependencies]
-video = [ "opencv-python", "imageio", "Pillow" ]
+color = [ ]
 csv = [ "pandas" ]
+dataset = [ "scikit-learn" ]
+graph = [ "networkx" ]
+image = [ ]
+plot = [ "networkx" ]
+video = [ "imageio", "Pillow" ]
 
 [tool.setuptools.packages.find]
 where = ["."]

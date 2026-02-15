@@ -11,14 +11,14 @@ def save_images_as_video(
     output_path: str,
     fps: int = 30,
 ) -> None:
-    """
+    '''
     Save a list of numpy image arrays as an MP4 video.
 
     Args:
         images: List of images (H, W, 3) in BGR or RGB format.
         output_path: Path to output video file.
         fps: Frames per second.
-    """
+    '''
     if not images:
         raise ValueError("No images provided.")
 
@@ -39,8 +39,8 @@ def save_images_as_gif(
     output_path: str,
     fps: int = 10,
 ) -> None:
-    """
+    '''
     Save a list of numpy image arrays as a GIF.
-    """
+    '''
     duration = 1 / fps
     imageio.mimsave(output_path, images, duration=duration)
