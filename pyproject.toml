@@ -14,15 +14,14 @@ requires-python = ">=3.8"
 dependencies = [
     "opencv-python",
     "numpy",
-    "matplotlib"
+    "matplotlib",
+    "streamlit"
 ]
 
 [project.optional-dependencies]
-color = [ ]
 csv = [ "pandas" ]
 dataset = [ "scikit-learn" ]
 graph = [ "networkx" ]
-image = [ ]
 plot = [ "networkx" ]
 video = [ "imageio", "Pillow", "moviepy" ]
 
