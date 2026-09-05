@@ -15,14 +15,16 @@ dependencies = [
     "opencv-python",
     "numpy",
     "matplotlib",
-    "streamlit"
+    "tqdm",
+    "streamlit",
+    "stqdm"
 ]
 
 [project.optional-dependencies]
 csv = [ "pandas" ]
 dataset = [ "scikit-learn" ]
 graph = [ "networkx" ]
-plot = [ "networkx" ]
+plot = [ "networkx", "plotly" ]
 video = [ "imageio", "Pillow", "moviepy" ]
 
 [tool.setuptools.packages.find]
