@@ -124,6 +124,55 @@ def access_webcam_feed_cv2() -> cv2.VideoCapture:
     '''
     return cv2.VideoCapture(0)
 
+def stream_video_feed_cv2(feed, start_frame=None, end_frame=None, loop=False):
+    '''
+    Stream frames from a video feed (cv2.VideoCapture) as an iterator
+    of frames as numpy arrays.
+
+    Args:
+        feed: cv2.VideoCapture object
+        start_frame: Optional index of the starting frame to read (inclusive).
+                     Defaults to 0.
+        end_frame: Optional index of the ending frame to read (exclusive).
+                   If None, reads until the end of the video.
+        loop: Whether to restart from start_frame after reaching the end
+              of the video or end_frame.
+
+    Yields:
+        frame: A frame as a numpy array (H, W, 3) in BGR format
+    '''
+    start_frame = 0 if start_frame is None else start_frame
+    frame_idx = start_frame
+
+    if start_frame > 0:
+        feed.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+
+    try:
+        while feed.isOpened():
+            if end_frame is not None and frame_idx >= end_frame:
+                if not loop:
+                    break
+
+                feed.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                frame_idx = start_frame
+                continue
+
+            ret, frame = feed.read()
+
+            if not ret:
+                if not loop:
+                    break
+
+                feed.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                frame_idx = start_frame
+                continue
+
+            yield frame
+            frame_idx += 1
+
+    finally:
+        feed.release()
+
 def read_video_feed_frames_cv2(feed, start_frame=None, end_frame=None) -> List[np.ndarray]:
     '''
     Read frames from a video feed (cv2.VideoCapture) and return a list of frames as numpy arrays
@@ -136,20 +185,7 @@ def read_video_feed_frames_cv2(feed, start_frame=None, end_frame=None) -> List[n
     Returns:
         frames: List of frames (H, W, 3) in BGR format
     '''
-    frames = []
-    frame_idx = 0
-    while feed.isOpened():
-        ret, frame = feed.read()
-        if not ret:
-            break
-        if (start_frame is not None and frame_idx < start_frame) or (end_frame is not None and frame_idx >= end_frame):
-            frame_idx += 1
-            continue
-        frames.append(frame)
-        frame_idx += 1
-    feed.release()
-
-    return frames
+    return list(stream_video_feed_cv2(feed, start_frame=start_frame, end_frame=end_frame))
 
 def read_video_file_frames_cv2(video_path, start_frame=None, end_frame=None) -> List[np.ndarray]:
     '''
