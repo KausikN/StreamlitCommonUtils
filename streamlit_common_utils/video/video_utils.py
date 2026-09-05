@@ -40,7 +40,6 @@ def save_images_as_video(
 
     video.release()
 
-
 def save_images_as_gif(
     images: List[np.ndarray],
     output_path: str,
@@ -104,7 +103,55 @@ def save_images_as_video_moviepy(frames, save_path, fps=24.0) -> None:
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     VIDEO.write_videofile(save_path, fps=fps)
 
-def read_video_cv2(video_path, start_frame=None, end_frame=None) -> List[np.ndarray]:
+def access_video_file_feed_cv2(video_path) -> cv2.VideoCapture:
+    '''
+    Access a video feed from a file and return the cv2.VideoCapture object
+
+    Args:
+        video_path: Path to the video file
+
+    Returns:
+        cap: cv2.VideoCapture object
+    '''
+    return cv2.VideoCapture(video_path)
+
+def access_webcam_feed_cv2() -> cv2.VideoCapture:
+    '''
+    Access the webcam feed and return the cv2.VideoCapture object
+
+    Returns:
+        cap: cv2.VideoCapture object
+    '''
+    return cv2.VideoCapture(0)
+
+def read_video_feed_frames_cv2(feed, start_frame=None, end_frame=None) -> List[np.ndarray]:
+    '''
+    Read frames from a video feed (cv2.VideoCapture) and return a list of frames as numpy arrays
+
+    Args:
+        feed: cv2.VideoCapture object
+        start_frame: Optional index of the starting frame to read (inclusive)
+        end_frame: Optional index of the ending frame to read (exclusive)
+
+    Returns:
+        frames: List of frames (H, W, 3) in BGR format
+    '''
+    frames = []
+    frame_idx = 0
+    while feed.isOpened():
+        ret, frame = feed.read()
+        if not ret:
+            break
+        if (start_frame is not None and frame_idx < start_frame) or (end_frame is not None and frame_idx >= end_frame):
+            frame_idx += 1
+            continue
+        frames.append(frame)
+        frame_idx += 1
+    feed.release()
+
+    return frames
+
+def read_video_file_frames_cv2(video_path, start_frame=None, end_frame=None) -> List[np.ndarray]:
     '''
     Read a video file and return a list of frames as numpy arrays
 
@@ -116,27 +163,8 @@ def read_video_cv2(video_path, start_frame=None, end_frame=None) -> List[np.ndar
     Returns:
         frames: List of frames (H, W, 3) in BGR format
     '''
-    cap = cv2.VideoCapture(video_path)
-    frames = []
-    frame_idx = 0
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
-        if (start_frame is not None and frame_idx < start_frame) or (end_frame is not None and frame_idx >= end_frame):
-            frame_idx += 1
-            continue
-        frames.append(frame)
-        frame_idx += 1
-
-def access_webcam_feed_cv2() -> cv2.VideoCapture:
-    '''
-    Access the webcam feed and return a list of frames as numpy arrays
-
-    Returns:
-        frames: List of frames (H, W, 3) in BGR format
-    '''
-    return cv2.VideoCapture(0)
+    feed = cv2.VideoCapture(video_path)
+    return read_video_feed_frames_cv2(feed, start_frame=start_frame, end_frame=end_frame)
 
 def reencode_video_ffmpeg(input_path, output_path) -> None:
     '''
